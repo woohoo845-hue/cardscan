@@ -91,15 +91,27 @@
     .setup-note a { color: #92400e; font-weight: 700; cursor: pointer; }
 
     /* SCAN */
+    #screen-scan {
+      padding: 0 !important;
+      display: none;
+      flex-direction: column;
+      height: calc(100dvh - 54px);
+    }
+    #screen-scan.active { display: flex; }
     .camera-wrap {
       background: #000;
-      border-radius: 14px;
       overflow: hidden;
       position: relative;
-      aspect-ratio: 4/3;
-      margin-bottom: 16px;
+      flex: 1;
+      min-height: 0;
     }
     #cameraFeed { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .scan-btns {
+      display: flex; gap: 10px;
+      padding: 14px 16px;
+      background: #fff;
+      border-top: 1px solid #e2e8f0;
+    }
     .card-guide-overlay {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
@@ -268,23 +280,23 @@
 <body>
 
 <div class="header">
-  <button class="back-btn" id="backBtn" onclick="goBack()">&#8592;</button>
-  <span class="header-title" id="headerTitle">&#x1F4C7; CardScan</span>
-  <button class="gear-btn" onclick="openSetup()" title="Connect Google Sheet">&#x2699;&#xFE0F;</button>
+  <button class="back-btn" id="backBtn" onclick="goBack()">←</button>
+  <span class="header-title" id="headerTitle">📇 CardScan</span>
+  <button class="gear-btn" onclick="openSetup()" title="Connect Google Sheet">⚙️</button>
 </div>
 
 <!-- HOME -->
 <div class="screen active" id="screen-home">
   <div class="home-top">
-    <div class="home-icon">&#x1F4C7;</div>
+    <div class="home-icon">📇</div>
     <div class="home-title">CardScan</div>
     <div class="home-sub">Photograph a business card and save the contact straight to your team's Google Sheet.</div>
   </div>
 
-  <button class="big-btn" onclick="startScan()">&#x1F4F7;&nbsp; Scan a Card</button>
+  <button class="big-btn" onclick="startScan()">📷&nbsp; Scan a Card</button>
 
   <div id="setupNote" class="setup-note">
-    &#x26A0;&#xFE0F; Google Sheet not connected yet. <a onclick="openSetup()">Connect now &#x2192;</a>
+    ⚠️ Google Sheet not connected yet. <a onclick="openSetup()">Connect now →</a>
   </div>
 </div>
 
@@ -293,9 +305,9 @@
   <div class="camera-wrap">
     <video id="cameraFeed" autoplay playsinline muted></video>
     <div class="card-guide-overlay"><div class="card-guide"></div></div>
-    <div class="cam-hint">Align the card inside the frame</div>
+    <div class="cam-hint">Align card inside the frame, then tap Capture</div>
     <div class="no-cam" id="noCam">
-      <div style="font-size:32px">&#x1F4F7;</div>
+      <div style="font-size:32px">📷</div>
       Camera unavailable — use Gallery instead.
     </div>
   </div>
@@ -303,78 +315,78 @@
   <canvas id="snapCanvas"></canvas>
   <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this)">
 
-  <div class="btn-row">
-    <button class="btn btn-primary" id="captureBtn" onclick="capturePhoto()">&#x1F4F8; Capture</button>
-    <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">&#x1F5BC; Gallery</button>
+  <div class="scan-btns">
+    <button class="btn btn-primary" id="captureBtn" onclick="capturePhoto()">📸 Capture</button>
+    <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">🖼 Gallery</button>
   </div>
 </div>
 
 <!-- PROCESSING -->
 <div class="screen" id="screen-processing">
   <img id="cardThumb" class="card-thumb" alt="">
-  <div style="text-align:center"><span class="chip">Reading card&#x2026;</span></div>
+  <div style="text-align:center"><span class="chip">Reading card…</span></div>
   <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
-  <div class="prog-label" id="progLabel">Starting&#x2026;</div>
+  <div class="prog-label" id="progLabel">Starting…</div>
 </div>
 
 <!-- REVIEW -->
 <div class="screen" id="screen-review">
   <div class="field-card">
     <div class="field-row">
-      <span class="field-icon">&#x1F464;</span>
+      <span class="field-icon">👤</span>
       <input class="field-input" id="f-name"    type="text"  placeholder="Full name">
     </div>
     <div class="field-row">
-      <span class="field-icon">&#x1F4BC;</span>
+      <span class="field-icon">💼</span>
       <input class="field-input" id="f-title"   type="text"  placeholder="Job title">
     </div>
     <div class="field-row">
-      <span class="field-icon">&#x1F3E2;</span>
+      <span class="field-icon">🏢</span>
       <input class="field-input" id="f-company" type="text"  placeholder="Company">
     </div>
     <div class="field-row">
-      <span class="field-icon">&#x2709;&#xFE0F;</span>
+      <span class="field-icon">✉️</span>
       <input class="field-input" id="f-email"   type="email" placeholder="Email">
     </div>
     <div class="field-row">
-      <span class="field-icon">&#x1F4DE;</span>
+      <span class="field-icon">📞</span>
       <input class="field-input" id="f-phone"   type="tel"   placeholder="Phone">
     </div>
   </div>
 
   <div class="notes-label">Notes</div>
-  <textarea class="notes-input" id="f-notes" placeholder="Where you met, what to follow up on&#x2026;"></textarea>
+  <textarea class="notes-input" id="f-notes" placeholder="Where you met, what to follow up on…"></textarea>
 
-  <button class="save-btn" id="saveBtn" onclick="saveContact()">&#x2705; Save to Google Sheet</button>
+  <button class="save-btn" id="saveBtn" onclick="saveContact()">✅ Save to Google Sheet</button>
   <button class="discard-btn" onclick="goHome()">Discard</button>
 </div>
 
 <!-- SETUP MODAL -->
 <div class="modal-bg" id="modalBg" onclick="closeSetupIfBg(event)">
   <div class="modal">
-    <h2>&#x1F517; Connect Google Sheets</h2>
+    <h2>🔗 Connect Google Sheets</h2>
     <p>One-time setup — ~3 minutes. After this every card goes straight into your shared team sheet.</p>
 
     <div class="step">
       <div class="step-num">1</div>
-      <div class="step-text">Open <strong>script.google.com</strong> &#x2192; New project &#x2192; delete any existing code.</div>
+      <div class="step-text">Open <strong>script.google.com</strong> → New project → delete any existing code.</div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
-      <div class="step-text">Tap <strong>Copy Script</strong> below, paste it in, save (&#x1F4BE;).</div>
+      <div class="step-text">Tap <strong>Copy Script</strong> below, paste it in, save (💾).</div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
-      <div class="step-text"><strong>Deploy &#x2192; New deployment</strong> &#x2192; Web app &#x2192; Execute as: Me &#x2192; Access: Anyone &#x2192; Deploy &#x2192; authorize &#x2192; copy the URL.</div>
+      <div class="step-text"><strong>Deploy → New deployment</strong> → Web app → Execute as: Me → Access: Anyone → Deploy → authorize → copy the URL.</div>
     </div>
     <div class="step" style="margin-bottom:16px">
       <div class="step-num">4</div>
       <div class="step-text">Paste that URL below and tap Save.</div>
     </div>
 
-    <button class="modal-btn" style="background:#f1f5f9;color:#1d4ed8;margin-bottom:12px" onclick="copyScript()">&#x1F4CB; Copy Script Code</button>
-    <input class="modal-input" id="urlInput" type="url" placeholder="https://script.google.com/macros/s/&#x2026;/exec">
-    <button class="modal-btn" onclick="saveUrl()">Save &amp; Connect</button>
+    <button class="modal-btn" style="background:#f1f5f9;color:#1d4ed8;margin-bottom:12px" onclick="copyScript()">📋 Copy Script Code</button>
+    <input class="modal-input" id="urlInput" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+    <button class="modal-btn" onclick="saveUrl()">Save & Connect</button>
     <button class="modal-link" onclick="closeSetup()">Skip for now</button>
   </div>
 </div>
@@ -404,7 +416,7 @@ const SCRIPT = `function doPost(e) {
 let stream   = null;
 let navStack = ['home'];
 
-const TITLES = { home:'CardScan', scan:'Scan Card', processing:'Reading...', review:'Review & Save' };
+const TITLES = { home:'📇 CardScan', scan:'📷 Scan Card', processing:'⏳ Reading…', review:'✏️ Review & Save' };
 
 function show(name, push = true) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -451,7 +463,7 @@ function capturePhoto() {
   canvas.width = video.videoWidth || 1280;
   canvas.height = video.videoHeight || 720;
   canvas.getContext('2d').drawImage(video, 0, 0);
-  runOCR(canvas.toDataURL('image/jpeg', 0.93));
+  runOCR(canvas.toDataURL('image/jpeg', 0.95));
 }
 
 function handleFile(input) {
@@ -462,20 +474,44 @@ function handleFile(input) {
   input.value = '';
 }
 
-async function runOCR(dataURL) {
+// Auto-rotate portrait images so landscape cards read correctly
+function autoRotate(dataURL) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      if (img.height > img.width * 1.2) {
+        // Portrait photo — rotate 90° CW so landscape card text is upright
+        const c = document.createElement('canvas');
+        c.width = img.height; c.height = img.width;
+        const ctx = c.getContext('2d');
+        ctx.translate(c.width / 2, c.height / 2);
+        ctx.rotate(Math.PI / 2);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        resolve(c.toDataURL('image/jpeg', 0.95));
+      } else {
+        resolve(dataURL);
+      }
+    };
+    img.src = dataURL;
+  });
+}
+
+async function runOCR(rawDataURL) {
   show('processing');
+  prog(3, 'Preparing image…');
+  const dataURL = await autoRotate(rawDataURL);
   document.getElementById('cardThumb').src = dataURL;
-  prog(5, 'Loading engine...');
+  prog(6, 'Loading engine…');
   try {
     const result = await Tesseract.recognize(dataURL, 'eng', {
       logger(m) {
-        if      (m.status === 'recognizing text')             prog(15 + Math.round(m.progress * 80), 'Reading... ' + Math.round(m.progress*100) + '%');
-        else if (m.status === 'loading tesseract core')       prog(5,  'Loading engine...');
-        else if (m.status === 'initializing tesseract')       prog(10, 'Initializing...');
-        else if (m.status === 'loading language traineddata') prog(12, 'Loading language...');
+        if      (m.status === 'recognizing text')           prog(15 + Math.round(m.progress * 80), `Reading… ${Math.round(m.progress*100)}%`);
+        else if (m.status === 'loading tesseract core')     prog(5,  'Loading engine…');
+        else if (m.status === 'initializing tesseract')     prog(10, 'Initializing…');
+        else if (m.status === 'loading language traineddata') prog(12, 'Loading language…');
       }
     });
-    prog(100, 'Done');
+    prog(100, 'Done ✓');
     fillForm(parse(result.data.text));
     setTimeout(() => show('review'), 300);
   } catch {
@@ -490,37 +526,117 @@ function prog(pct, label) {
 }
 
 function parse(text) {
-  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
-  const email = (text.match(/[\w.+\-]+@[\w.\-]+\.[a-z]{2,}/i) || [])[0] || '';
-  const phone = (text.match(/(\+?1?[\s\-.]?\(?\d{3}\)?[\s\-.]?\d{3}[\s\-.]?\d{4}|\+[\d\s\-]{9,15})/) || [])[0]?.trim() || '';
+  const lines = text.split('\n')
+    .map(l => l.trim().replace(/\s+/g, ' '))
+    .filter(l => l.length > 1);
 
-  const TITLE_KW = ['CEO','CTO','CFO','COO','President','Vice President','VP','Director',
-    'Manager','Lead','Head','Engineer','Developer','Designer','Analyst','Consultant',
-    'Partner','Associate','Founder','Co-Founder','Officer','Specialist','Executive','Senior','Principal'];
+  // --- Email ---
+  const emailMatch = text.match(/[\w.+\-]+@[\w.\-]+\.[a-z]{2,}/i);
+  const email = emailMatch ? emailMatch[0].toLowerCase() : '';
 
-  let title = '', titleIdx = -1;
-  for (let i = 0; i < lines.length; i++) {
-    if (TITLE_KW.some(kw => new RegExp('\\b'+kw+'\\b','i').test(lines[i]))) {
-      title = lines[i]; titleIdx = i; break;
-    }
-  }
+  // --- Phone: prefer mobile (M: line), fall back to any number ---
+  // Strip label prefixes like "M |", "T |", "Tel:", "Ph:" before matching
+  const cleanText = text.replace(/\b(M|T|Tel|Mob|Mobile|Ph|Phone|Fax)\s*[|:]\s*/gi, ' ');
+  // Remove Ext/extension parts from phone
+  const phoneRaw = cleanText.match(/(\+?[\d][\d\s\-().]{7,}\d)(?:\s*(?:Ext|x|Extn)[\s.:]*\d+)?/i);
+  const phone = phoneRaw
+    ? phoneRaw[0].replace(/\s*(?:Ext|x|Extn)[\s.:]*\d+/gi, '').replace(/\s+/g,' ').trim()
+    : '';
+
+  // --- Website ---
+  const webMatch = text.match(/(www\.[^\s]+|https?:\/\/[^\s]+)/i);
+  const website = webMatch ? webMatch[0] : '';
+
+  const TITLE_KW = [
+    'CEO','CTO','CFO','COO','CMO','CXO','CPO','CHRO',
+    'President','Vice President','VP','SVP','EVP','AVP',
+    'Director','Sr. Director','Senior Director','Deputy Director',
+    'Manager','Sr. Manager','Senior Manager','General Manager','Deputy Manager',
+    'Lead','Team Lead','Tech Lead','Head',
+    'Engineer','Sr. Engineer','Senior Engineer','Software Engineer',
+    'Developer','Architect','Designer',
+    'Analyst','Business Analyst','Data Analyst',
+    'Consultant','Senior Consultant',
+    'Partner','Associate','Associate Director',
+    'Founder','Co-Founder','Officer','Executive','Specialist','Principal',
+    'Sales','Marketing','Operations','Finance','Accounts','Procurement','Purchase',
+    'Supply Chain','Logistics','Quality','Regulatory',
+    'Doctor','Dr.','Prof.','Professor',
+    'Proprietor','Owner','Chairman','MD','Managing Director'
+  ];
 
   const used = new Set();
-  if (titleIdx >= 0) used.add(titleIdx);
+
   lines.forEach((l, i) => {
-    if (email && l.includes(email.slice(0,5))) used.add(i);
-    if (phone && l.replace(/\D/g,'').includes(phone.replace(/\D/g,'').slice(0,6))) used.add(i);
+    const lc = l.toLowerCase();
+    if (email && lc.includes(email.slice(0,6))) used.add(i);
+    if (phone && l.replace(/\D/g,'').length > 5 &&
+        l.replace(/\D/g,'').includes(phone.replace(/\D/g,'').slice(0,7))) used.add(i);
+    if (website && lc.includes(website.slice(0,8).toLowerCase())) used.add(i);
+    // Skip address/social/utility lines
+    if (/^(www\.|http|@[a-z]|p\.?o\.?\s*box|plot|no\.|flat|floor|door|ph:|fax:|scan\s+qr)/i.test(l)) used.add(i);
+    if (/\d{5,}/.test(l) && /(?:road|street|lane|nagar|hills|city|india|hyderabad|mumbai|delhi|bangalore)/i.test(l)) used.add(i);
   });
 
-  const free = lines.filter((_,i) => !used.has(i));
-  let name = '', nameIdx = -1;
-  for (let i = 0; i < free.length; i++) {
-    const w = free[i].split(/\s+/).filter(Boolean);
-    if (w.length >= 2 && w.length <= 4 && free[i].length <= 40 && !/\d/.test(free[i])) {
-      name = free[i]; nameIdx = i; break;
+  // --- Title: find first title line, then merge next line if it looks like a continuation ---
+  let title = '', titleFirstIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (used.has(i)) continue;
+    if (TITLE_KW.some(kw => new RegExp('(^|[\\s,/\\-])'+kw.replace(/\./g,'\\.')+'([\\s,/\\-]|$)','i').test(lines[i]))) {
+      title = lines[i]; titleFirstIdx = i; used.add(i);
+      // Check if next unused line is also a title continuation (no digits, short, no @)
+      for (let j = i+1; j < lines.length; j++) {
+        if (used.has(j)) continue;
+        const nxt = lines[j];
+        if (!/@/.test(nxt) && !/\d{3}/.test(nxt) && nxt.length < 50 &&
+            TITLE_KW.some(kw => new RegExp('(^|[\\s,/\\-])'+kw.replace(/\./g,'\\.')+'([\\s,/\\-]|$)','i').test(nxt))) {
+          title += ' - ' + nxt; used.add(j);
+        }
+        break;
+      }
+      break;
     }
   }
-  const company = free.filter((_,i) => i !== nameIdx)[0] || '';
+
+  // --- Name: 2-5 words, no digits, title-case or ALL CAPS, allow initial like "V. Bala..." ---
+  const free1 = lines.filter((_,i) => !used.has(i));
+  let name = '';
+  for (let i = 0; i < free1.length; i++) {
+    const l = free1[i];
+    const words = l.split(/\s+/).filter(Boolean);
+    if (/\d/.test(l) || l.length > 50 || words.length < 2 || words.length > 6) continue;
+    // Each word: capital letter, or initial like "V." or "Mc..."
+    const isTitleCase = words.every(w => /^[A-Z\u00C0-\u024F][a-z\u00C0-\u024F]/.test(w) || /^[A-Z]\.$/g.test(w));
+    const isAllCaps = /^[A-Z\s.]+$/.test(l) && /[A-Z]{2}/.test(l);
+    if (isTitleCase || isAllCaps) {
+      // Properly case it: keep initials like "V." as-is, capitalize rest
+      name = words.map(w => /^[A-Z]\.$/g.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+      const origIdx = lines.findIndex(ll => ll === free1[i]);
+      if (origIdx >= 0) used.add(origIdx);
+      break;
+    }
+  }
+
+  // --- Company: prefer lines with explicit keywords, else brand-name all-caps word, else first free line ---
+  const companyKW = ['Inc','Ltd','LLC','LLP','Pvt','Private','Limited','Corp','Co.','Group',
+    'Technologies','Solutions','Consulting','Services','Systems','Enterprises','Associates',
+    'Foundation','Institute','Hospital','Clinic','School','University','College','Labs',
+    'Pharma','Pharmaceuticals','Chemicals','Biotech','Biosciences','Industries'];
+
+  const free2 = lines.filter((_,i) => !used.has(i));
+  let company = '';
+
+  for (const l of free2) {
+    if (companyKW.some(kw => new RegExp('\\b'+kw+'\\b','i').test(l))) { company = l; break; }
+  }
+  // Fallback: a short ALL-CAPS word on its own is likely the brand/company name
+  if (!company) {
+    for (const l of free2) {
+      if (/^[A-Z]{2,}$/.test(l) && l.length <= 20) { company = l; break; }
+    }
+  }
+  if (!company && free2.length > 0) company = free2[0];
+
   return { name, title, company, email, phone };
 }
 
@@ -546,17 +662,17 @@ async function saveContact() {
   }
 
   const url = localStorage.getItem('cs_url');
-  if (!url) { toast('No Sheet connected — opening setup...'); openSetup(); return; }
+  if (!url) { toast('No Sheet connected — opening setup…'); openSetup(); return; }
 
-  btn.innerHTML = '<span class="spinner"></span> Saving...';
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
   btn.disabled  = true;
   try {
     await fetch(url, { method:'POST', body: JSON.stringify(contact), headers:{'Content-Type':'application/json'} });
-    toast('Saved to Google Sheet!');
+    toast('✅ Saved to Google Sheet!');
   } catch {
     toast('Save failed — check your connection.');
   }
-  btn.innerHTML = 'Save to Google Sheet';
+  btn.innerHTML = '✅ Save to Google Sheet';
   btn.disabled  = false;
   goHome();
 }
@@ -570,18 +686,18 @@ function saveUrl() {
   if (!url || !url.startsWith('https://script.google.com')) { toast('Paste a valid Apps Script URL.'); return; }
   localStorage.setItem('cs_url', url);
   closeSetup(); checkSetup();
-  toast('Google Sheet connected!');
+  toast('✅ Google Sheet connected!');
 }
 
 function copyScript() {
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(SCRIPT).then(() => toast('Script copied!')).catch(fallbackCopy);
+    navigator.clipboard.writeText(SCRIPT).then(() => toast('✅ Script copied!')).catch(fallbackCopy);
   } else { fallbackCopy(); }
 }
 function fallbackCopy() {
   const ta = Object.assign(document.createElement('textarea'), { value: SCRIPT });
   document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-  document.body.removeChild(ta); toast('Script copied!');
+  document.body.removeChild(ta); toast('✅ Script copied!');
 }
 
 let toastTimer;
